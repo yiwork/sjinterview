@@ -27,7 +27,7 @@ Please look at their Dockerfile  (attached) and:
     3. I'm not sure if we want to run the database in containers. This might be a great way of running dev environment but for production it may be a wise move to first run them via a service (like RDS or Google Cloud SQL), OR run hosted instances on Database servers with elastic storage backing them with snapshot capabilities. This is where my experience limitations shows, I've not worked at a place where database are run in a container to know what has to happen with regards to good backup and availability. 
     4. There's no SSL certificates being served by Nginx here, so that has to be rectified. Or have it be hooked up to to k8s or ECS with a dedicated ingress layer that serves the domain's certfiicates. 
     5. Are there any database authentications here?  Given that nothing is mentioned in the dockerfile it is possible that the logins to the database is hard coded and embedded into code and that should be stored in as a secret and not be checked into the codebaase repo.
-    6. The cron scraper should be run using a container task scheduler and not be run with a cron daemon inside a docker container. 
+    6. The cron scraper should be run using a container task scheduler and not be run with a cron daemon inside a docker container. So that cron would be eliminated immediately if running on kubernetes and instead be run as cronjob workload.
 
 3.	Remix this Dockerfile into something that can be deployed in an AWS and Kubernetes based environment.
     Please see all dockerfiles in this repo not named `orig.dockerfile`
