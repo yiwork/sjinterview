@@ -12,7 +12,8 @@ When your buddy hands it off to you on a flash drive, you notice they have a Doc
 **Question 1:**
  
 Please look at their Dockerfile  (attached) and:
-1.	Summarize how you think the application works and identify any major components we’ll need to deploy. 
+1.	Summarize how you think the application works and identify any major components we’ll need to deploy.
+    
     The entire application have 5 components. 
     - Database to store locations, hotdog prices, etc. 
     - Go app as the web scraper for prices
@@ -21,6 +22,7 @@ Please look at their Dockerfile  (attached) and:
     - Crond that runs the go scraper at scheduled intervals. 
 
 2.	Identify any smells or danger zones in the Dockerfile and indicate what you would do to improve them.
+    
     Where to begin?  
     1. Docker is meant to run one process only, but this dockerfile combines all the components into 1 container. No individual component scalability.  First thing to do is to break the Dockerfile down into different Dockerfiles. Please see the additional dockerfiles as to how I would go about in breaking them out. 
     2. The resultant docker image doesn't have dedicated app users running these apps, so all the apps would run as root with potential security implications. 
