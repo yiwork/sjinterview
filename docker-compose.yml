@@ -1,0 +1,83 @@
+services:
+  db:
+    image: postgres
+    env_file:
+      - '.env'
+      - 'super_secret_database.conf'
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - db_data:/var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    ports:
+      - 5432:5432
+
+  go_app:
+    build:
+      dockerfile: goapp.dockerfile
+      context: .
+    env_file:
+      - '.env'
+      - 'super_secret_database.conf'
+    depends_on:
+      - db
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./gocode
+          target: gocode
+
+# depending on how often the assets are changed, we may either create a separate nginx dockerfile that builds
+# each time we run compose up to pull down new files, or we just download the tarball by hand and unpack onto the volume then
+# watch the volume to restart
+  nginx:
+    image: nginx:latest
+    volumes:
+      - nginx.conf:/etc/nginx/sites-available/nginx.conf
+      - app.tar.gz:/opt/nginx/app.tar.gz
+    entrypoint: ["tar", "-xvf", "/opt/nginx/app.tar.gz"]   # this is a huge hack to unpack files before cmd run to start daemon
+    command: ["nginx", "-g", "daemon off;"]
+    ports:
+      - 80:80
+    develop:
+      watch:
+        - action: sync+restart
+          path: nginx.conf
+          target: /etc/nginx/sites-available/nginx.conf
+        - action: sync+restart
+          path: app.tar.gz
+          target: /opt/nginx/app.tar.gz
+
+  rails_app:
+    build:
+      dockerfile: rails.dockerfile
+      context: .
+    env_file:
+      - '.env'
+      - 'super_secret_database.conf'
+    depends_on:
+      - db
+      - go_app
+      - nginx
+    ports:
+      - 5000:5000
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./rails
+          target: /rails
+
+### 
+# super_secret_database.conf should probably contain PGUSER and PGPASSWORD env variables
+#
+
+# we could use secrets, but it is a new feature within docker-compose and 
+# it seems like you'll need to load individual pieces of info from file
+# it might be better to just stick to env_file for now
+secrets:
+  
