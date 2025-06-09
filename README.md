@@ -9,7 +9,7 @@ Your buddy fires up their laptop and shows you the ‘hello-world’ version of 
  
 When your buddy hands it off to you on a flash drive, you notice they have a Dockerfile they used in their local environment.
  
-Question 1:
+**Question 1:**
  
 Please look at their Dockerfile  (attached) and:
 1.	Summarize how you think the application works and identify any major components we’ll need to deploy.  
@@ -19,7 +19,7 @@ Please look at their Dockerfile  (attached) and:
  
 Please return a Zip file including any project files you draft up.  We do not expect a fully working/deployable project.  As such, use your best judgement on where to include detail and where to stub things out.  
  
-Question 2: 
+**Question 2:**
  
 1.	As you were working through Question 1 what process, controls, tooling, features or automation did you need to solve as part of shipping this app and what did you consider but decide to defer?
 2.	What problems did/would these items solve?
