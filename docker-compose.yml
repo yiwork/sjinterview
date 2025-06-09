@@ -66,6 +66,12 @@ services:
       - nginx
     ports:
       - 5000:5000
+    # mounting rails volume allows dynamic reloading of new rails ruby file
+    # while the watch command below may help with the node requirements and forcing the 
+    # container to reinstall node requirements during re-build. I would further separate that out later as required when the node
+    # components gets bigger. 
+    volumes:
+      - ./rails:rail
     develop:
       watch:
         - action: sync+restart
